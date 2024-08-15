@@ -1,6 +1,5 @@
 package com.nunes.financeFlow.models;
 
-import com.nunes.financeFlow.enumerator.TipoCategoria;
 import com.nunes.financeFlow.enumerator.TipoReceita;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -41,5 +40,9 @@ public class Receita {
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)  // Define a chave estrangeira para a tabela de usuários
     private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "conta_id", nullable = false)
+    private Conta conta;
 
 }

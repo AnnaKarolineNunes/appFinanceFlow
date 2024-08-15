@@ -2,6 +2,7 @@ package com.nunes.financeFlow.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nunes.financeFlow.enumerator.TipoReceita;
+import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Receita;
 import com.nunes.financeFlow.models.Usuario;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class ReceitaDto {
     private String descricao;
     private TipoReceita tipoReceita;
     private Long idUsuario;
+    private Long idConta;
 
     public ReceitaDto(Receita receita) {
         this.id = receita.getId();
@@ -36,9 +38,10 @@ public class ReceitaDto {
         this.tipoReceita = receita.getTipoReceita();
         this.nome = receita.getNome();
         this.idUsuario = receita.getUsuario() != null ? receita.getUsuario().getId() : null;
+        this.idConta = receita.getConta().getId();
     }
 
-    public static Receita convert(ReceitaDto receitaDto, Usuario usuario) {
+    public static Receita convert(ReceitaDto receitaDto, Usuario usuario, Conta conta) {
         Receita receita = new Receita();
 
         receita.setId(receitaDto.getId());
@@ -50,6 +53,7 @@ public class ReceitaDto {
         receita.setTipoReceita(receitaDto.getTipoReceita());
         // Associa o usuário ao objeto Receita
         receita.setUsuario(usuario);
+        receita.setConta(conta);
 
         return receita;
     }

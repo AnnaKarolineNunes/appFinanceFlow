@@ -1,8 +1,10 @@
 package com.nunes.financeFlow.services;
 
+import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.dtos.ReceitaDto;
 import com.nunes.financeFlow.models.Receita;
 import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.ReceitaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
@@ -22,19 +24,31 @@ public class ReceitaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private ContaRepository contaRepository;
+
     // Método para salvar uma nova receita
-    public ApiResponse<ReceitaDto> save(ReceitaDto receitaDto) {
+    public ApiResponse<ReceitaDto> save(ReceitaDto dto) {
         try {
-            // Busca o usuário pelo ID
-            Optional<Usuario> usuarioOpt = usuarioRepository.findById(receitaDto.getIdUsuario());
-            if (usuarioOpt.isPresent()) {
-                // Converte ReceitaDto para Receita utilizando o objeto Usuario
-                Receita receita = ReceitaDto.convert(receitaDto, usuarioOpt.get());
-                Receita novaReceita = this.receitaRepository.save(receita);
-                return new ApiResponse<>(201, "Receita criada com sucesso!", new ReceitaDto(novaReceita));
-            } else {
-                return new ApiResponse<>(404, "Usuário não encontrado para o ID fornecido", null);
+            // Buscar o usuário pelo ID
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getIdUsuario());
+            if (usuarioOpt.isEmpty()) {
+                return new ApiResponse<>(404, "Usuário não encontrado!", null);
             }
+
+            // Buscar a conta pelo ID
+            Optional<Conta> contaOpt = contaRepository.findById(dto.getIdConta());
+            if (contaOpt.isEmpty()) {
+                return new ApiResponse<>(404, "Conta não encontrada!", null);
+            }
+
+            // Converter DTO para entidade Receita
+            Receita receita = ReceitaDto.convert(dto, usuarioOpt.get(), contaOpt.get());
+
+            // Salvar a receita
+            receita = receitaRepository.save(receita);
+
+            return new ApiResponse<>(201, "Receita criada com sucesso!", new ReceitaDto(receita));
         } catch (Exception e) {
             return new ApiResponse<>(500, "Erro ao criar receita: " + e.getMessage(), null);
         }

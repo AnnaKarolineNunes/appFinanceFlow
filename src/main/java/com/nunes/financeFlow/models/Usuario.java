@@ -21,10 +21,10 @@ public class Usuario {
     @Column
     private String nome;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(length = 30, nullable = false)
+    @Column(nullable = false, length = 10)
     private String senha;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,7 +33,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Receita> receitas;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Conta> contas;
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Conta conta; // Um usuário tem uma única conta
 
 }

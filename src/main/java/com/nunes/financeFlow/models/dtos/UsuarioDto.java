@@ -34,8 +34,16 @@ public class UsuarioDto {
         this.email = usuario.getEmail();
     }
 
+    public boolean isValidPassword() {
+        return this.senha != null && this.senha.equals(this.confirmaSenha);
+    }
+
 
     public static Usuario convert(UsuarioDto usuarioDto){
+
+        if (!usuarioDto.isValidPassword()) {
+            throw new IllegalArgumentException("Senha e confirmação de senha não correspondem.");
+        }
         Usuario usuario = new Usuario();
 
         usuario.setId(usuarioDto.getId());

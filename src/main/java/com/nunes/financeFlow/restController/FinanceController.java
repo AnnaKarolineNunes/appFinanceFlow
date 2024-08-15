@@ -2,14 +2,14 @@ package com.nunes.financeFlow.restController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.nunes.financeFlow.services.FinanceService;
+import com.nunes.financeFlow.services.DashboardService;
 import com.nunes.financeFlow.shared.ApiResponse;
 
 @RestController
 public class FinanceController {
 
     @Autowired
-    private FinanceService financeService;
+    private DashboardService financeService;
 
     // GET total receitas
     @GetMapping("/receita/{userId}")

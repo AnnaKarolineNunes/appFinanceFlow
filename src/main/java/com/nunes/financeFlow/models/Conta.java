@@ -19,13 +19,16 @@ public class Conta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "tipo_conta", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TipoConta tipoConta;
+    @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Despesa> despesas;
+
+    @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Receita> receitas;
+
 
     public Conta(Long id) {
         this.id = id;

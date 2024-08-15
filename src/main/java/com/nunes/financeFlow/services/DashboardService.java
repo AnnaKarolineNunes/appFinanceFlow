@@ -8,7 +8,7 @@ import com.nunes.financeFlow.repositories.ReceitaRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
 
 @Service
-public class FinanceService {
+public class DashboardService {
 
     @Autowired
     private ReceitaRepository receitaRepository;

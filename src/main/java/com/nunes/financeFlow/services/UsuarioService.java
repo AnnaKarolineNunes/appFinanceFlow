@@ -1,6 +1,8 @@
 package com.nunes.financeFlow.services;
 
+import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
 import com.nunes.financeFlow.models.dtos.AuthDto;
@@ -19,6 +21,9 @@ public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
+    @Autowired
+    ContaRepository contaRepository;
+
     public ApiResponse<UsuarioDto> save(UsuarioDto dto) {
         try {
             if (usuarioRepository.existsByEmail(dto.getEmail())) {
@@ -29,8 +34,15 @@ public class UsuarioService {
                 return new ApiResponse<>(400, "As senhas digitadas não coincidem. Por favor, verifique e tente novamente", null);
             }
 
+            // Armazenando a senha em texto simples
             Usuario usuario = UsuarioDto.convert(dto);
+            usuario.setSenha(dto.getSenha()); // Armazenando a senha em texto simples
             usuario = this.usuarioRepository.save(usuario);
+
+            // Criação automática da conta vinculada ao usuário
+            Conta conta = new Conta();
+            conta.setUsuario(usuario);
+            contaRepository.save(conta);
 
             return new ApiResponse<>(201, "Usuário cadastrado com sucesso!", new UsuarioDto(usuario));
         } catch (Exception e) {
@@ -46,6 +58,7 @@ public class UsuarioService {
                 return new ApiResponse<>(400, "Usuário ou senha inválida!", null);
             }
 
+            // Comparando a senha em texto simples
             if (!existeUsuario.get().getSenha().equals(dto.getSenha())) {
                 return new ApiResponse<>(400, "Usuário ou senha inválida!", null);
             }
@@ -76,6 +89,7 @@ public class UsuarioService {
             return new ApiResponse<>(500, e.getMessage(), null);
         }
     }
+
     public ApiResponse<UsuarioDto> updateById(Long id, UsuarioDto dto) {
         try {
             ApiResponse<UsuarioDto> existeUsuario = this.findById(id);
@@ -93,7 +107,7 @@ public class UsuarioService {
 
             usuario = this.usuarioRepository.save(usuario);
 
-            return new ApiResponse<>(200, "Usuário editada com sucesso!", new UsuarioDto(usuario));
+            return new ApiResponse<>(200, "Usuário editado com sucesso!", new UsuarioDto(usuario));
         } catch (Exception e) {
             return new ApiResponse<>(500, e.getMessage(), null);
         }
@@ -118,7 +132,7 @@ public class UsuarioService {
     public ApiResponse<Void> deleteUser(Long userId) {
         if (usuarioRepository.existsById(userId)) {
             usuarioRepository.deleteById(userId);
-            return new ApiResponse<>(200, "Conta excluída com sucesso!", null);
+            return new ApiResponse<>(200, "Usuário excluído com sucesso!", null);
         } else {
             return new ApiResponse<>(404, "Usuário não encontrado", null);
         }

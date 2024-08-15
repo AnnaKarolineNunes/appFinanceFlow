@@ -7,6 +7,7 @@ import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,11 +33,14 @@ public class ContaService {
             }
 
             // Cria e salva a nova conta
-            Conta conta = ContaDto.convert(dto);
+            Conta conta = ContaDto.convert(dto, usuarioOpt.get());
             conta.setUsuario(usuarioOpt.get());
+
             conta = contaRepository.save(conta);
 
             return new ApiResponse<>(201, "Conta cadastrada com sucesso!", new ContaDto(conta));
+        } catch (DataIntegrityViolationException e) {
+            return new ApiResponse<>(400, "Violação de integridade dos dados: " + e.getMessage(), null);
         } catch (Exception e) {
             return new ApiResponse<>(500, "Erro ao salvar conta: " + e.getMessage(), null);
         }
@@ -81,12 +85,13 @@ public class ContaService {
 
             // Atualiza a conta
             Conta conta = contaOpt.get();
-            conta.setTipoConta(dto.getTipoConta());
             conta.setUsuario(usuarioOpt.get());
 
             conta = contaRepository.save(conta);
 
             return new ApiResponse<>(200, "Conta editada com sucesso!", new ContaDto(conta));
+        } catch (DataIntegrityViolationException e) {
+            return new ApiResponse<>(400, "Violação de integridade dos dados: " + e.getMessage(), null);
         } catch (Exception e) {
             return new ApiResponse<>(500, "Erro ao atualizar conta: " + e.getMessage(), null);
         }
@@ -101,7 +106,9 @@ public class ContaService {
                 return new ApiResponse<>(404, "Conta não encontrada por ID!", null);
             }
 
+            // A exclusão da conta acionará a exclusão em cascata das despesas, receitas e do próprio usuário, se configurado corretamente.
             contaRepository.deleteById(id);
+
             return new ApiResponse<>(200, "Conta excluída com sucesso!", existeConta.getData());
         } catch (Exception e) {
             return new ApiResponse<>(500, "Erro ao excluir conta: " + e.getMessage(), null);
