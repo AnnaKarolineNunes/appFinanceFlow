@@ -1,0 +1,109 @@
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fffff; /* Alterado para branco */
+        }
+
+
+        .logo{
+         padding-left: 30px;
+         width:13%;
+        }
+        .container {
+            display: flex;
+            width: 80%;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .buttonLogin {
+            min-width:150px;
+            max-width:150px;
+            font-size: 15px;
+            text-align:center;
+            color: #fff;
+            background-color: #4A00E0;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-left: 60em;
+        }
+
+        .left {
+            flex: 1;
+            background: #fff; /* Alterado para branco */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .left img {
+            width: 80%;
+            height: auto;
+        }
+        .right {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .right h2 {
+            margin-bottom: 20px;
+            font-size: 35px;
+            text-align:center;
+            color: #333;
+        }
+
+        .right form {
+            display: flex;
+            flex-direction: column;
+        }
+        .right form input {
+            margin-bottom: 15px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        .right form button {
+            padding: 15px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4A00E0;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .right form button:hover {
+            background-color: #3700B3;
+        }
+        .top-bar {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+       .texto_topbar{
+            color: #00000;
+            font-weigth:bold;
+            padding-top:7px;
+            padding-left:100px;
+            text-decoration: none;
+       }
+
+
+
