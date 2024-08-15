@@ -21,7 +21,7 @@ O **FinanceFlow** é um sistema de controle financeiro pessoal projetado para aj
 - **Banco de Dados**: MySQL
 - **Controle de Versão**: Git e GitHub
 - **Ambiente de Desenvolvimento**: IntelliJ IDEA
-- **Design e Prototipagem**: Figma 
+- **Design e Prototipagem**: Figma https://www.figma.com/design/fj49AH2WwvsBhxtFJeO63V/FinanceFlow?node-id=0-1&t=8tyFM9qQNyeOAB0v-0
 - **Testes de API**: Postman
 - **Gerenciamento de Projetos**: Trello
 
