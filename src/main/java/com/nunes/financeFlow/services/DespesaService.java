@@ -1,7 +1,9 @@
 package com.nunes.financeFlow.services;
 
+import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Despesa;
 import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.DespesaRepository;
 import com.nunes.financeFlow.models.dtos.DespesaDto;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
@@ -22,24 +24,36 @@ public class DespesaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private ContaRepository contaRepository;
+
     // Método para salvar uma nova receita
     public ApiResponse<DespesaDto> save(DespesaDto despesaDto) {
         try {
-            // Busca o usuário pelo ID
+            // Buscar o usuário pelo ID
             Optional<Usuario> usuarioOpt = usuarioRepository.findById(despesaDto.getIdUsuario());
-            if (usuarioOpt.isPresent()) {
-                // Converte ReceitaDto para Receita utilizando o objeto Usuario
-                Despesa despesa = DespesaDto.convert(despesaDto, usuarioOpt.get());
-                Despesa novaDespesa = this.despesaRepository.save(despesa);
-                return new ApiResponse<>(201, "Despesa criada com sucesso!", new DespesaDto(novaDespesa));
-            } else {
-                return new ApiResponse<>(404, "Usuário não encontrado para o ID fornecido", null);
+            if (usuarioOpt.isEmpty()) {
+                return new ApiResponse<>(404, "Usuário não encontrado!", null);
             }
+
+            // Buscar a conta pelo ID
+            Optional<Conta> contaOpt = contaRepository.findById(despesaDto.getIdConta());
+            if (contaOpt.isEmpty()) {
+                return new ApiResponse<>(404, "Conta não encontrada!", null);
+            }
+
+            // Converter DTO para entidade Despesa
+            Despesa despesa = DespesaDto.convert(despesaDto, usuarioOpt.get(), contaOpt.get());
+
+            // Salvar a despesa
+            despesa = despesaRepository.save(despesa);
+
+            return new ApiResponse<>(201, "Despesa criada com sucesso!", new DespesaDto(despesa));
         } catch (Exception e) {
-            e.printStackTrace();
             return new ApiResponse<>(500, "Erro ao criar despesa: " + e.getMessage(), null);
         }
     }
+
 
     // Método para atualizar uma receita existente
     public ApiResponse<DespesaDto> updateById(Long id, DespesaDto despesaDto) {

@@ -28,12 +28,12 @@ public class UsuarioController {
         return this.usuarioService.findById(id);
     }
 
-    @PutMapping("/usuarios/{id}")
+    @PutMapping("/atualizarUsuario/{id}")
     public ApiResponse<UsuarioDto> updateById(@PathVariable Long id, @RequestBody UsuarioDto dto) {
         return this.usuarioService.updateById(id, dto);
     }
 
-    @DeleteMapping("/usuarios/{id}")
+    @DeleteMapping("/deletarUsuario/{id}")
     public ApiResponse<UsuarioDto> deleteById(@PathVariable Long id) {
         return this.usuarioService.deleteById(id);
     }

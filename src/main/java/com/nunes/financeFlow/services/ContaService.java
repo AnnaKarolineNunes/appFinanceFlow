@@ -100,18 +100,19 @@ public class ContaService {
     // Método para excluir uma conta por ID
     public ApiResponse<ContaDto> deleteById(Long id) {
         try {
-            ApiResponse<ContaDto> existeConta = findById(id);
+            Optional<Conta> contaOpt = contaRepository.findById(id);
 
-            if (existeConta.getStatus() != 200) {
+            if (contaOpt.isEmpty()) {
                 return new ApiResponse<>(404, "Conta não encontrada por ID!", null);
             }
 
-            // A exclusão da conta acionará a exclusão em cascata das despesas, receitas e do próprio usuário, se configurado corretamente.
+            // A exclusão da conta acionará a exclusão em cascata das despesas, receitas e do usuário
             contaRepository.deleteById(id);
 
-            return new ApiResponse<>(200, "Conta excluída com sucesso!", existeConta.getData());
+            return new ApiResponse<>(200, "Conta excluída com sucesso!", new ContaDto(contaOpt.get()));
         } catch (Exception e) {
             return new ApiResponse<>(500, "Erro ao excluir conta: " + e.getMessage(), null);
         }
     }
+
 }

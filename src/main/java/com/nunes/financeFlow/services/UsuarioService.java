@@ -92,26 +92,34 @@ public class UsuarioService {
 
     public ApiResponse<UsuarioDto> updateById(Long id, UsuarioDto dto) {
         try {
-            ApiResponse<UsuarioDto> existeUsuario = this.findById(id);
-
-            if (existeUsuario.getStatus() != 200) {
+            // Buscar o usuário existente no banco de dados
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+            if (usuarioOpt.isEmpty()) {
                 return new ApiResponse<>(404, "Não é possível editar, pois usuário não foi encontrado por ID!", null);
             }
 
-            Usuario usuario = UsuarioDto.convert(dto);
-            usuario.setId(id);
+            Usuario usuarioExistente = usuarioOpt.get();
 
+            // Verificar se o email já está em uso por outro usuário
             if (usuarioRepository.existsByEmailAndNotId(dto.getEmail(), id)) {
                 return new ApiResponse<>(409, "Não é possível editar, pois já existe outro usuário com esse email!", null);
             }
 
-            usuario = this.usuarioRepository.save(usuario);
+            // Atualizar apenas os campos necessários
+            usuarioExistente.setNome(dto.getNome());
+            usuarioExistente.setEmail(dto.getEmail());
+            usuarioExistente.setSenha(dto.getSenha());
+            // Outros campos podem ser atualizados aqui conforme necessário
 
-            return new ApiResponse<>(200, "Usuário editado com sucesso!", new UsuarioDto(usuario));
+            // Salvar as mudanças no banco de dados
+            usuarioExistente = usuarioRepository.save(usuarioExistente);
+
+            return new ApiResponse<>(200, "Usuário editado com sucesso!", new UsuarioDto(usuarioExistente));
         } catch (Exception e) {
             return new ApiResponse<>(500, e.getMessage(), null);
         }
     }
+
 
     public ApiResponse<UsuarioDto> deleteById(Long id) {
         try {

@@ -3,6 +3,7 @@ package com.nunes.financeFlow.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nunes.financeFlow.enumerator.TipoDespesa;
+import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Despesa;
 import com.nunes.financeFlow.models.Usuario;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class DespesaDto {
     private String descricao;
     private TipoDespesa tipoDespesa;
     private Long idUsuario;
+    private Long idConta;
 
     public DespesaDto(Despesa despesa){
         this.id = despesa.getId();
@@ -37,9 +39,10 @@ public class DespesaDto {
         this.tipoDespesa = despesa.getTipoDespesa();
         this.nome = despesa.getNome();
         this.idUsuario = despesa.getUsuario() != null ? despesa.getUsuario().getId() : null;
+        this.idConta = despesa.getConta().getId();
     }
 
-    public static Despesa convert(DespesaDto despesaDto,  Usuario usuario){
+    public static Despesa convert(DespesaDto despesaDto,  Usuario usuario, Conta conta){
         Despesa despesa = new Despesa();
 
         despesa.setId(despesaDto.getId());
@@ -51,6 +54,7 @@ public class DespesaDto {
         despesa.setNome(despesaDto.getNome());
         // Associa o usuário ao objeto Despesa
         despesa.setUsuario(usuario);
+        despesa.setConta(conta);
 
         return  despesa;
     }
