@@ -1,0 +1,5 @@
+CREATE TABLE conta (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario BIGINT NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id) ON DELETE CASCADE
+);
