@@ -1,6 +1,6 @@
 CREATE TABLE receita (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    descricao VARCHAR(255),
+    descricao  VARCHAR(255),
     nome VARCHAR(255),
     valor DECIMAL(10, 2) NOT NULL,
     data DATE NOT NULL,

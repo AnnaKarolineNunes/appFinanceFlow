@@ -3,10 +3,10 @@ package com.nunes.financeFlow.services;
 import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.dtos.ReceitaDto;
 import com.nunes.financeFlow.models.Receita;
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.User;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.ReceitaRepository;
-import com.nunes.financeFlow.repositories.UsuarioRepository;
+import com.nunes.financeFlow.repositories.UserRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class ReceitaService {
     private ReceitaRepository receitaRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private ContaRepository contaRepository;
@@ -31,7 +31,7 @@ public class ReceitaService {
     public ApiResponse<ReceitaDto> save(ReceitaDto dto) {
         try {
             // Buscar o usuário pelo ID
-            Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getIdUsuario());
+            Optional<User> usuarioOpt = userRepository.findById(dto.getIdUsuario());
             if (usuarioOpt.isEmpty()) {
                 return new ApiResponse<>(404, "Usuário não encontrado!", null);
             }
@@ -74,14 +74,14 @@ public class ReceitaService {
                     return new ApiResponse<>(500, "Erro ao atualizar receita: ID da receita é nulo.", null);
                 }
 
-                Optional<Usuario> usuarioOpt = usuarioRepository.findById(receitaDto.getIdUsuario());
+                Optional<User> usuarioOpt = userRepository.findById(receitaDto.getIdUsuario());
                 if (usuarioOpt.isPresent()) {
                     receita.setValor(receitaDto.getValor());
                     receita.setDescricao(receitaDto.getDescricao());
                     receita.setNome(receitaDto.getNome());
                     receita.setData(receitaDto.getData());
                     receita.setTipoReceita(receitaDto.getTipoReceita());
-                    receita.setUsuario(usuarioOpt.get());
+                    receita.setUser(usuarioOpt.get());
 
                     Receita receitaAtualizada = this.receitaRepository.save(receita);
 

@@ -1,6 +1,5 @@
 package com.nunes.financeFlow.models;
 
-import com.nunes.financeFlow.enumerator.TipoConta;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,7 @@ public class Conta {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario usuario;
+    private User user;
 
     @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Despesa> despesas;
