@@ -39,7 +39,7 @@ public class Despesa {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)  // Define a chave estrangeira para a tabela de usuários
-    private User user;
+    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "conta_id", nullable = false)

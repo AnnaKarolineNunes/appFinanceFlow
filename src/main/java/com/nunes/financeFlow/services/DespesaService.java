@@ -2,11 +2,11 @@ package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Despesa;
-import com.nunes.financeFlow.models.User;
+import com.nunes.financeFlow.models.Usuario;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.DespesaRepository;
 import com.nunes.financeFlow.models.dtos.DespesaDto;
-import com.nunes.financeFlow.repositories.UserRepository;
+import com.nunes.financeFlow.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nunes.financeFlow.shared.ApiResponse;
@@ -22,7 +22,7 @@ public class DespesaService {
     DespesaRepository despesaRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private ContaRepository contaRepository;
@@ -31,7 +31,7 @@ public class DespesaService {
     public ApiResponse<DespesaDto> save(DespesaDto despesaDto) {
         try {
             // Buscar o usuário pelo ID
-            Optional<User> usuarioOpt = userRepository.findById(despesaDto.getIdUsuario());
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(despesaDto.getIdUsuario());
             if (usuarioOpt.isEmpty()) {
                 return new ApiResponse<>(404, "Usuário não encontrado!", null);
             }
@@ -75,14 +75,14 @@ public class DespesaService {
                     return new ApiResponse<>(500, "Erro ao atualizar despesa: ID da despesa é nulo.", null);
                 }
 
-                Optional<User> usuarioOpt = userRepository.findById(despesaDto.getIdUsuario());
+                Optional<Usuario> usuarioOpt = usuarioRepository.findById(despesaDto.getIdUsuario());
                 if (usuarioOpt.isPresent()) {
                     despesa.setValor(despesaDto.getValor());
                     despesa.setDescricao(despesaDto.getDescricao());
                     despesa.setNome(despesaDto.getNome());
                     despesa.setData(despesaDto.getData());
                     despesa.setTipoDespesa(despesaDto.getTipoDespesa());
-                    despesa.setUser(usuarioOpt.get());
+                    despesa.setUsuario(usuarioOpt.get());
 
                     Despesa despesaAtualizada = this.despesaRepository.save(despesa);
 

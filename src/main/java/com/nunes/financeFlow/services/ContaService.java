@@ -1,10 +1,10 @@
 package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.User;
+import com.nunes.financeFlow.models.Usuario;
 import com.nunes.financeFlow.models.dtos.ContaDto;
 import com.nunes.financeFlow.repositories.ContaRepository;
-import com.nunes.financeFlow.repositories.UserRepository;
+import com.nunes.financeFlow.repositories.UsuarioRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,20 +21,20 @@ public class ContaService {
     private ContaRepository contaRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UsuarioRepository usuarioRepository;
 
     // Método para salvar uma nova conta
     public ApiResponse<ContaDto> save(ContaDto dto) {
         try {
             // Verifica se o usuário associado existe
-            Optional<User> usuarioOpt = userRepository.findById(dto.getIdUsuario());
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getIdUsuario());
             if (usuarioOpt.isEmpty()) {
                 return new ApiResponse<>(404, "Usuário associado não encontrado!", null);
             }
 
             // Cria e salva a nova conta
             Conta conta = ContaDto.convert(dto, usuarioOpt.get());
-            conta.setUser(usuarioOpt.get());
+            conta.setUsuario(usuarioOpt.get());
 
             conta = contaRepository.save(conta);
 
@@ -78,14 +78,14 @@ public class ContaService {
             }
 
             // Verifica se o usuário associado existe
-            Optional<User> usuarioOpt = userRepository.findById(dto.getIdUsuario());
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getIdUsuario());
             if (usuarioOpt.isEmpty()) {
                 return new ApiResponse<>(404, "Usuário associado não encontrado!", null);
             }
 
             // Atualiza a conta
             Conta conta = contaOpt.get();
-            conta.setUser(usuarioOpt.get());
+            conta.setUsuario(usuarioOpt.get());
 
             conta = contaRepository.save(conta);
 

@@ -20,7 +20,7 @@ public class Conta {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_usuario", nullable = false)
-    private User user;
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Despesa> despesas;

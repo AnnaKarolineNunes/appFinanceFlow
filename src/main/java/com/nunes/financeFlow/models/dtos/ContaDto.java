@@ -1,7 +1,7 @@
 package com.nunes.financeFlow.models.dtos;
 
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.User;
+import com.nunes.financeFlow.models.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,18 +20,18 @@ public class ContaDto {
     // Construtor a partir da entidade Conta
     public ContaDto(Conta conta) {
         this.id = conta.getId();
-        if (conta.getUser() != null) {
-            this.idUsuario = conta.getUser().getId();
+        if (conta.getUsuario() != null) {
+            this.idUsuario = conta.getUsuario().getId();
         }
     }
 
     // Método para converter ContaDto em Conta
-    public static Conta convert(ContaDto contaDto, User user) {
+    public static Conta convert(ContaDto contaDto, Usuario usuario) {
         Conta conta = new Conta();
 
         conta.setId(contaDto.getId());
         conta.setId(contaDto.getId());
-        conta.setUser(user); // Agora o usuário já é buscado previamente
+        conta.setUsuario(usuario); // Agora o usuário já é buscado previamente
         return conta;
     }
 

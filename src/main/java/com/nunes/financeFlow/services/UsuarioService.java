@@ -1,9 +1,9 @@
 package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.User;
+import com.nunes.financeFlow.models.Usuario;
 import com.nunes.financeFlow.repositories.ContaRepository;
-import com.nunes.financeFlow.repositories.UserRepository;
+import com.nunes.financeFlow.repositories.UsuarioRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
 import com.nunes.financeFlow.models.dtos.AuthDto;
 import com.nunes.financeFlow.models.dtos.UsuarioDto;
@@ -19,32 +19,32 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     @Autowired
-    UserRepository userRepository;
+    UsuarioRepository usuarioRepository;
 
     @Autowired
     ContaRepository contaRepository;
 
     public ApiResponse<UsuarioDto> save(UsuarioDto dto) {
         try {
-            if (userRepository.existsByEmail(dto.getLogin())) {
+            if (usuarioRepository.existsByEmail(dto.getEmail())) {
                 return new ApiResponse<>(409, "Já existe outro usuário com esse email!", null);
             }
 
-            if (!Objects.equals(dto.getPassword(), dto.getConfirmaSenha())) {
+            if (!Objects.equals(dto.getSenha(), dto.getConfirmaSenha())) {
                 return new ApiResponse<>(400, "As senhas digitadas não coincidem. Por favor, verifique e tente novamente", null);
             }
 
             // Armazenando a senha em texto simples
-            User user = UsuarioDto.convert(dto);
-            user.setPassword(dto.getPassword()); // Armazenando a senha em texto simples
-            user = this.userRepository.save(user);
+            Usuario usuario = UsuarioDto.convert(dto);
+            usuario.setSenha(dto.getSenha()); // Armazenando a senha em texto simples
+            usuario = this.usuarioRepository.save(usuario);
 
             // Criação automática da conta vinculada ao usuário
             Conta conta = new Conta();
-            conta.setUser(user);
+            conta.setUsuario(usuario);
             contaRepository.save(conta);
 
-            return new ApiResponse<>(201, "Usuário cadastrado com sucesso!", new UsuarioDto(user));
+            return new ApiResponse<>(201, "Usuário cadastrado com sucesso!", new UsuarioDto(usuario));
         } catch (Exception e) {
             return new ApiResponse<>(500, e.getMessage(), null);
         }
@@ -52,14 +52,14 @@ public class UsuarioService {
 
     public ApiResponse<UsuarioDto> login(AuthDto dto) {
         try {
-            Optional<User> existeUsuario = this.userRepository.findByEmail(dto.getEmail());
+            Optional<Usuario> existeUsuario = this.usuarioRepository.findByEmail(dto.getEmail());
 
             if (existeUsuario.isEmpty()) {
                 return new ApiResponse<>(400, "Usuário ou senha inválida!", null);
             }
 
             // Comparando a senha em texto simples
-            if (!existeUsuario.get().getPassword().equals(dto.getSenha())) {
+            if (!existeUsuario.get().getSenha().equals(dto.getSenha())) {
                 return new ApiResponse<>(400, "Usuário ou senha inválida!", null);
             }
 
@@ -71,9 +71,9 @@ public class UsuarioService {
 
     public ApiResponse<List<UsuarioDto>> findAll() {
         try {
-            List<User> users = this.userRepository.findAll();
+            List<Usuario> usuarios = this.usuarioRepository.findAll();
             return new ApiResponse<>(200, "Listagem de usuários realizada com sucesso!",
-                    users.stream().map(UsuarioDto::new).collect(Collectors.toList()));
+                    usuarios.stream().map(UsuarioDto::new).collect(Collectors.toList()));
         } catch (Exception e) {
             return new ApiResponse<>(500, e.getMessage(), null);
         }
@@ -81,7 +81,7 @@ public class UsuarioService {
 
     public ApiResponse<UsuarioDto> findById(Long id) {
         try {
-            Optional<User> resultado = this.userRepository.findById(id);
+            Optional<Usuario> resultado = this.usuarioRepository.findById(id);
 
             return resultado.map(usuario -> new ApiResponse<>(200, "Detalhamento de usuário realizado com sucesso!",
                     new UsuarioDto(usuario))).orElseGet(() -> new ApiResponse<>(204, "Usuário não encontrado!", null));
@@ -93,28 +93,28 @@ public class UsuarioService {
     public ApiResponse<UsuarioDto> updateById(Long id, UsuarioDto dto) {
         try {
             // Buscar o usuário existente no banco de dados
-            Optional<User> usuarioOpt = userRepository.findById(id);
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
             if (usuarioOpt.isEmpty()) {
                 return new ApiResponse<>(404, "Não é possível editar, pois usuário não foi encontrado por ID!", null);
             }
 
-            User userExistente = usuarioOpt.get();
+            Usuario usuarioExistente = usuarioOpt.get();
 
             // Verificar se o email já está em uso por outro usuário
-            if (userRepository.existsByEmailAndNotId(dto.getLogin(), id)) {
+            if (usuarioRepository.existsByEmailAndNotId(dto.getEmail(), id)) {
                 return new ApiResponse<>(409, "Não é possível editar, pois já existe outro usuário com esse email!", null);
             }
 
             // Atualizar apenas os campos necessários
-            userExistente.setNome(dto.getNome());
-            userExistente.setLogin(dto.getLogin());
-            userExistente.setPassword(dto.getPassword());
+            usuarioExistente.setNome(dto.getNome());
+            usuarioExistente.setEmail(dto.getEmail());
+            usuarioExistente.setSenha(dto.getSenha());
             // Outros campos podem ser atualizados aqui conforme necessário
 
             // Salvar as mudanças no banco de dados
-            userExistente = userRepository.save(userExistente);
+            usuarioExistente = usuarioRepository.save(usuarioExistente);
 
-            return new ApiResponse<>(200, "Usuário editado com sucesso!", new UsuarioDto(userExistente));
+            return new ApiResponse<>(200, "Usuário editado com sucesso!", new UsuarioDto(usuarioExistente));
         } catch (Exception e) {
             return new ApiResponse<>(500, e.getMessage(), null);
         }
@@ -129,7 +129,7 @@ public class UsuarioService {
                 return new ApiResponse<>(404, "Não foi possível excluir, pois usuário não foi encontrado por ID!", null);
             }
 
-            this.userRepository.deleteById(id);
+            this.usuarioRepository.deleteById(id);
 
             return new ApiResponse<>(200, "Usuário excluído com sucesso!", existeUsuario.getData());
         } catch (Exception e) {
@@ -138,8 +138,8 @@ public class UsuarioService {
     }
 
     public ApiResponse<Void> deleteUser(Long userId) {
-        if (userRepository.existsById(userId)) {
-            userRepository.deleteById(userId);
+        if (usuarioRepository.existsById(userId)) {
+            usuarioRepository.deleteById(userId);
             return new ApiResponse<>(200, "Usuário excluído com sucesso!", null);
         } else {
             return new ApiResponse<>(404, "Usuário não encontrado", null);
