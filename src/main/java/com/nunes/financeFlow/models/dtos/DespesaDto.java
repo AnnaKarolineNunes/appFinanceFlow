@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nunes.financeFlow.enumerator.TipoDespesa;
 import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Despesa;
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

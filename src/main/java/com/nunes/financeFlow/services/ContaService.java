@@ -1,7 +1,7 @@
 package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import com.nunes.financeFlow.models.dtos.ContaDto;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;

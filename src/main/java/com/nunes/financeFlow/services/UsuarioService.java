@@ -1,13 +1,14 @@
 package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
 import com.nunes.financeFlow.shared.ApiResponse;
 import com.nunes.financeFlow.models.dtos.AuthDto;
 import com.nunes.financeFlow.models.dtos.UsuarioDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,9 @@ public class UsuarioService {
     @Autowired
     ContaRepository contaRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder; // Injetando PasswordEncoder
+
     public ApiResponse<UsuarioDto> save(UsuarioDto dto) {
         try {
             if (usuarioRepository.existsByEmail(dto.getEmail())) {
@@ -34,9 +38,9 @@ public class UsuarioService {
                 return new ApiResponse<>(400, "As senhas digitadas não coincidem. Por favor, verifique e tente novamente", null);
             }
 
-            // Armazenando a senha em texto simples
-            Usuario usuario = UsuarioDto.convert(dto);
-            usuario.setSenha(dto.getSenha()); // Armazenando a senha em texto simples
+            // Usando o PasswordEncoder ao converter o DTO em Usuario
+            Usuario usuario = UsuarioDto.convert(dto, passwordEncoder);
+
             usuario = this.usuarioRepository.save(usuario);
 
             // Criação automática da conta vinculada ao usuário
@@ -101,7 +105,7 @@ public class UsuarioService {
             Usuario usuarioExistente = usuarioOpt.get();
 
             // Verificar se o email já está em uso por outro usuário
-            if (usuarioRepository.existsByEmailAndNotId(dto.getEmail(), id)) {
+            if (usuarioRepository.existsByEmailAndIdNot(dto.getEmail(), id)) {
                 return new ApiResponse<>(409, "Não é possível editar, pois já existe outro usuário com esse email!", null);
             }
 

@@ -1,12 +1,13 @@
 package com.nunes.financeFlow.models.dtos;
 
 
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Setter
@@ -30,7 +31,6 @@ public class UsuarioDto {
     public UsuarioDto(Usuario usuario){
         this.id = usuario.getId();
         this.nome = usuario.getNome();
-        this.senha = usuario.getSenha();
         this.email = usuario.getEmail();
     }
 
@@ -39,8 +39,7 @@ public class UsuarioDto {
     }
 
 
-    public static Usuario convert(UsuarioDto usuarioDto){
-
+    public static Usuario convert(UsuarioDto usuarioDto, PasswordEncoder passwordEncoder) {
         if (!usuarioDto.isValidPassword()) {
             throw new IllegalArgumentException("Senha e confirmação de senha não correspondem.");
         }
@@ -48,8 +47,10 @@ public class UsuarioDto {
 
         usuario.setId(usuarioDto.getId());
         usuario.setNome(usuarioDto.getNome());
-        usuario.setSenha(usuarioDto.getSenha());
         usuario.setEmail(usuarioDto.getEmail());
+        // Criptografando a senha antes de definir
+        usuario.setSenha(passwordEncoder.encode(usuarioDto.getSenha()));
+
         return usuario;
     }
 }

@@ -1,7 +1,7 @@
 package com.nunes.financeFlow.models.dtos;
 
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

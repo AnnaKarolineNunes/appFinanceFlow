@@ -2,7 +2,7 @@ package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Despesa;
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.DespesaRepository;
 import com.nunes.financeFlow.models.dtos.DespesaDto;

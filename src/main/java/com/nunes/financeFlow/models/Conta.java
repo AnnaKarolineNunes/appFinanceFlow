@@ -1,5 +1,6 @@
 package com.nunes.financeFlow.models;
 
+import com.nunes.financeFlow.models.user.Usuario;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

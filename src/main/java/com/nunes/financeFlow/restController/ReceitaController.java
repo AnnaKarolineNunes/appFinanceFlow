@@ -22,22 +22,22 @@ public class ReceitaController {
         return this.receitaService.save(receitaDto);
     }
 
-    @GetMapping("/receitas")
+    @GetMapping("/listaReceitas")
     public ApiResponse<List<ReceitaDto>> findAll(){
         return  this.receitaService.findAll();
     }
 
-    @GetMapping("/receitas/{id}")
+    @GetMapping("/receita/{id}")
     public ApiResponse<ReceitaDto> findById(@PathVariable Long id){
         return this.receitaService.findById(id);
     }
 
-    @DeleteMapping("/receita/{id}")
+    @DeleteMapping("receitas/deletar/{id}")
     public ApiResponse<ReceitaDto> deleteById(@PathVariable Long id) {
         return receitaService.deleteById(id);
     }
 
-    @PutMapping("/receitas/{id}")
+    @PutMapping("/receitas/atualizar/{id}")
     public ResponseEntity<ApiResponse<ReceitaDto>> updateById(@PathVariable Long id, @RequestBody ReceitaDto receitaDto){
         System.out.println("Recebendo chamada PUT /receitas/" + id);
         System.out.println("ID no path: " + id);

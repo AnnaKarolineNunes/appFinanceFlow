@@ -1,17 +1,15 @@
 package com.nunes.financeFlow.repositories;
 
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmail(String email);
 
-    @Query("SELECT COUNT(u) > 0 FROM Usuario u WHERE u.email = :email")
     boolean existsByEmail(String email);
 
-    @Query("SELECT COUNT(u) > 0 FROM Usuario u WHERE u.email = :email AND u.id <> :id")
-    boolean existsByEmailAndNotId(String email, Long id);
+    boolean existsByEmailAndIdNot(String email, Long id);
+
 }

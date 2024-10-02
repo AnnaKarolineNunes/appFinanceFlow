@@ -31,12 +31,12 @@ public class DespesaController {
         return this.despesaService.findById(id);
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/despesas/deletar/{id}")
     public ApiResponse<DespesaDto> deleteById(@PathVariable Long id) {
         return despesaService.deleteById(id);
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/despesas/atualizar/{id}")
     public ResponseEntity<ApiResponse<DespesaDto>> updateById(@PathVariable Long id, @RequestBody DespesaDto despesaDto){
         System.out.println("Recebendo chamada PUT /despesas/" + id);
         System.out.println("ID no path: " + id);
