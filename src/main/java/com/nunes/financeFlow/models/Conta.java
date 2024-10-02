@@ -1,6 +1,5 @@
 package com.nunes.financeFlow.models;
 
-import com.nunes.financeFlow.enumerator.TipoConta;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

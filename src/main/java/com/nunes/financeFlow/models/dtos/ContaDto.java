@@ -1,6 +1,5 @@
 package com.nunes.financeFlow.models.dtos;
 
-import com.nunes.financeFlow.enumerator.TipoConta;
 import com.nunes.financeFlow.models.Conta;
 import com.nunes.financeFlow.models.Usuario;
 import lombok.AllArgsConstructor;

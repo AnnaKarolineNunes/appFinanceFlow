@@ -42,7 +42,7 @@ public class DespesaDto {
         this.idConta = despesa.getConta().getId();
     }
 
-    public static Despesa convert(DespesaDto despesaDto,  Usuario usuario, Conta conta){
+    public static Despesa convert(DespesaDto despesaDto, Usuario usuario, Conta conta){
         Despesa despesa = new Despesa();
 
         despesa.setId(despesaDto.getId());
