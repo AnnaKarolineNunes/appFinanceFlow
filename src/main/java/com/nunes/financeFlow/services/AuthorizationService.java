@@ -1,4 +1,4 @@
-package com.example.auth.services;
+package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;

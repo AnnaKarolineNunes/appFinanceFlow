@@ -19,8 +19,7 @@ public class Conta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @OneToOne(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
     private Usuario usuario;
 
     @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -28,9 +27,4 @@ public class Conta {
 
     @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Receita> receitas;
-
-
-    public Conta(Long id) {
-        this.id = id;
-    }
 }

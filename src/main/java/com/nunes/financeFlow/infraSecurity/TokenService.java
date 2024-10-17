@@ -18,16 +18,17 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    // Alteração: usar o método getUsername() que retorna o email do usuário
+    @Value("${api.security.token.expiration.hours}")
+    private int expirationHours;
+
     public String generateToken(Usuario usuario) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(usuario.getUsername())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
-            return token;
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Error while generating token", exception);
         }
@@ -42,11 +43,11 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            return "";
+            return null;
         }
     }
 
     private Instant genExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(expirationHours).toInstant(ZoneOffset.of("-03:00"));
     }
 }

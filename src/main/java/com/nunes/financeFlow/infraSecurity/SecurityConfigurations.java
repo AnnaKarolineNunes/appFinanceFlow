@@ -22,7 +22,7 @@ public class SecurityConfigurations {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return  httpSecurity
+        return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
@@ -30,38 +30,8 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
-                        // Usuários (somente admins podem listar todos os usuários)
-                        .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()   //.hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/atualizarUsuario/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/deletarUsuario/**").authenticated()
-
-                        // Receitas
-                        .requestMatchers(HttpMethod.POST, "/receitas").authenticated() // Criar receitas
-                        .requestMatchers(HttpMethod.GET, "/listaReceitas").authenticated()  // Listar receitas
-                        .requestMatchers(HttpMethod.GET, "/receita/**").authenticated() // Receita por ID
-                        .requestMatchers(HttpMethod.PUT, "/despesas/atualizar/**").authenticated() // Atualizar receitas
-                        .requestMatchers(HttpMethod.DELETE, "/despesas/deletar/**").authenticated() // Deletar receitas
-
-                        // Despesas
-                        .requestMatchers(HttpMethod.POST, "/despesas").authenticated() // Criar despesas
-                        .requestMatchers(HttpMethod.GET, "/listaDespesas").authenticated() // Listar despesas
-                        .requestMatchers(HttpMethod.GET, "/despesa/**").authenticated() // Despesa por ID
-                        .requestMatchers(HttpMethod.PUT, "/receitas/atualizar/**").authenticated() // Atualizar despesas
-                        .requestMatchers(HttpMethod.DELETE, "/receitas/deletar/**").authenticated() // Deletar despesas
-
-                        // Dashboard (consultas financeiras)
-                        .requestMatchers(HttpMethod.GET, "/receita/**").authenticated() // Total de receitas
-                        .requestMatchers(HttpMethod.GET, "/despesas/**").authenticated() // Total de despesas
-                        .requestMatchers(HttpMethod.GET, "/saldo/**").authenticated() // Consultar saldo
-
-                        // Contas
-                        .requestMatchers(HttpMethod.POST, "/contas").authenticated() // Criar conta
-                        .requestMatchers(HttpMethod.GET, "/contas").authenticated()  // Listar contas
-                        .requestMatchers(HttpMethod.PUT, "/contas/**").authenticated() // Atualizar conta
-                        .requestMatchers(HttpMethod.DELETE, "/contas/**").authenticated() // Deletar conta
-
-                        .anyRequest().authenticated() // Qualquer outra rota requer autenticação
+                        // Qualquer outra rota requer autenticação
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -73,7 +43,7 @@ public class SecurityConfigurations {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
