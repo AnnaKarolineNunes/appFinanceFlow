@@ -1,8 +1,0 @@
-CREATE TABLE usuario (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    senha VARCHAR(60) NOT NULL,
-    conta_id BIGINT UNIQUE,
-    CONSTRAINT fk_usuario_conta FOREIGN KEY (conta_id) REFERENCES conta(id) ON DELETE CASCADE
-);

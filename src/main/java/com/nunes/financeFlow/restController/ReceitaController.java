@@ -27,7 +27,7 @@ public class ReceitaController {
         return  this.receitaService.findAll();
     }
 
-    @GetMapping("/receita/{id}")
+    @GetMapping("/getReceita/{id}")
     public ApiResponse<ReceitaDto> findById(@PathVariable Long id){
         return this.receitaService.findById(id);
     }

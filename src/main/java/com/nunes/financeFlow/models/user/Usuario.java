@@ -33,10 +33,8 @@ public class Usuario implements UserDetails {
     @Column
     private String nome;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "conta_id", referencedColumnName = "id", nullable = false)
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Conta conta;
-
 
     // Implementação de UserDetails
     @Override

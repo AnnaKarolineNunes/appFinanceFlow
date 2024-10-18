@@ -66,8 +66,9 @@ public class AuthenticationController {
 
         Conta newConta = new Conta();
         newConta.setUsuario(savedUser);
+        savedUser.setConta(newConta);
         this.contaRepository.save(newConta);
 
-        return ResponseEntity.ok("Usuário registrado com sucesso.");
+        return ResponseEntity.ok("Usuário e conta registrados com sucesso.");
     }
 }
