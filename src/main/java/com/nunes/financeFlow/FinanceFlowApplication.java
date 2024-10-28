@@ -16,11 +16,13 @@ public class FinanceFlowApplication {
 		String dbUser = dotenv.get("DATABASE_USER");
 		String dbPassword = dotenv.get("DATABASE_PASSWORD");
 		String jwtsecret = dotenv.get("JWT_SECRET");
+		String expiration_hours = dotenv.get("EXPIRATION_HOURS");
 
+		System.setProperty("api.security.token.expiration.hours" , expiration_hours);
 		System.setProperty("spring.datasource.url", dbUrl);
 		System.setProperty("spring.datasource.username", dbUser);
 		System.setProperty("spring.datasource.password", dbPassword);
-		System.setProperty("jwt.secret", jwtsecret);  // Configura a secret key do JWT
+		System.setProperty("api.security.token.secret", jwtsecret);  // Configura a secret key do JWT
 
 		SpringApplication.run(FinanceFlowApplication.class, args);
 	}
