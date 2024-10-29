@@ -30,6 +30,9 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
+                        // Somente "ADMIN" pode acessar estas rotas
+                        .requestMatchers(HttpMethod.GET, "/contas/ListaContas", "/usuarios/ListaUsuarios").hasAuthority("ROLE_ADMIN")
+
                         // Qualquer outra rota requer autenticação
                         .anyRequest().authenticated()
                 )

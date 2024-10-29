@@ -7,10 +7,13 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.nunes.financeFlow.models.user.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.GrantedAuthority;
+
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
@@ -27,12 +30,16 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(usuario.getUsername())
+                    .withClaim("roles", usuario.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toList()))
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Error while generating token", exception);
         }
     }
+
 
     public String validateToken(String token) {
         try {

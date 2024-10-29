@@ -36,11 +36,14 @@ public class Usuario implements UserDetails {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Conta conta;
 
+    @Enumerated(EnumType.STRING) // Para armazenar o valor do enum como String no banco
+    @Column(nullable = true) // Define a coluna como opcional
+    private UserRole role = UserRole.USER; // Define USER como valor padrão
 
     // Implementação de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name())); // Usando 'name()' para pegar o valor do enum como String
     }
 
     @Override

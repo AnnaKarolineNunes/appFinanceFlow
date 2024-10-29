@@ -2,10 +2,7 @@ package com.nunes.financeFlow.controller;
 
 import com.nunes.financeFlow.infraSecurity.TokenService;
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.user.LoginResponseDTO;
-import com.nunes.financeFlow.models.user.RegisterDTO;
-import com.nunes.financeFlow.models.user.Usuario;
-import com.nunes.financeFlow.models.user.AuthenticationDTO;
+import com.nunes.financeFlow.models.user.*;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
 import jakarta.validation.Valid;
@@ -62,6 +59,13 @@ public class AuthenticationController {
         newUser.setSenha(encryptedPassword);
         newUser.setNome(data.nome());
 
+        // Define o role apenas se foi especificado, caso contrário, use o valor padrão USER
+        if (data.role() != null) {
+            newUser.setRole(data.role());
+        } else {
+            newUser.setRole(UserRole.USER);
+        }
+
         Usuario savedUser = this.usuarioRepository.save(newUser);
 
         Conta newConta = new Conta();
@@ -71,4 +75,5 @@ public class AuthenticationController {
 
         return ResponseEntity.ok("Usuário e conta registrados com sucesso.");
     }
+
 }

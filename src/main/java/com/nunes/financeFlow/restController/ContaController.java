@@ -8,6 +8,7 @@ import com.nunes.financeFlow.shared.ApiResponse;
 
 import java.util.List;
 
+@RequestMapping("contas")
 @RestController
 public class ContaController {
 
@@ -15,30 +16,30 @@ public class ContaController {
     private ContaService contaService;
 
     // POST
-    @PostMapping("/contas")
+    @PostMapping("/salvarConta")
     public ApiResponse<ContaDto> save(@RequestBody ContaDto dto){
         return this.contaService.save(dto);
     }
 
     // GET
-    @GetMapping("/contas")
+    @GetMapping("/ListaContas")
     public ApiResponse<List<ContaDto>> findAll(){
         return this.contaService.findAll();
     }
 
-    @GetMapping("/contas/{id}")
+    @GetMapping("/GetContaId/{id}")
     public ApiResponse<ContaDto> findById(@PathVariable Long id){
         return this.contaService.findById(id);
     }
 
     // PUT
-    @PutMapping("/contas/{id}")
+    @PutMapping("/UpContaId/{id}")
     public ApiResponse<ContaDto> updateById(@PathVariable Long id, @RequestBody ContaDto dto){
         return this.contaService.updateById(id, dto);
     }
 
     // DELETE
-    @DeleteMapping("/contas/{id}")
+    @DeleteMapping("/DelContaId/{id}")
     public ApiResponse<ContaDto> deleteById(@PathVariable Long id){
         return this.contaService.deleteById(id);
     }

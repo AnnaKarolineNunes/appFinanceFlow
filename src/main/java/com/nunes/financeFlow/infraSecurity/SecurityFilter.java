@@ -45,19 +45,36 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             // Verifica se o email foi recuperado corretamente (token válido)
             if (email != null && !email.isEmpty()) {
+                logger.info("Tentando buscar usuário no repositório com email: {}", email);
                 UserDetails user = usuarioRepository.findByEmail(email).orElse(null);
 
                 if (user != null) {
-                    logger.info("Usuário autenticado: {}", email);
-                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    logger.info("Usuário encontrado: {}. Preparando para autenticar o usuário.", email);
+
+                    // Criação do token com as autoridades
+                    var authorities = user.getAuthorities();
+                    logger.info("Autoridades atribuídas ao usuário: {}", authorities);
+
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.info("Usuário autenticado com sucesso. Email: {}, Autoridades: {}", email, authorities);
+
+                    // Log adicional para verificar o contexto de segurança
+                    if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                        logger.info("Usuário autenticado está presente no contexto de segurança.");
+                    } else {
+                        logger.warn("Falha ao inserir o usuário no contexto de segurança.");
+                    }
                 } else {
                     logger.info("Usuário não encontrado: {}", email);
                 }
             } else {
-                logger.info("Token inválido ou expirado.");
+                logger.info("Email recuperado do token está nulo ou vazio.");
             }
+        } else {
+            logger.info("Token não encontrado no cabeçalho Authorization.");
         }
+
 
         // Continua o filtro, seja autenticado ou não
         filterChain.doFilter(request, response);
