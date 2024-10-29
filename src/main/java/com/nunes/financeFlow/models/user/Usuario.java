@@ -36,6 +36,7 @@ public class Usuario implements UserDetails {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Conta conta;
 
+
     // Implementação de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

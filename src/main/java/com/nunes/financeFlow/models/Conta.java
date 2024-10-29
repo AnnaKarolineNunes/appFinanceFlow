@@ -21,7 +21,9 @@ public class Conta {
 
     @OneToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false, unique = true)
+    @MapsId
     private Usuario usuario;
+
 
     @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Despesa> despesas;
