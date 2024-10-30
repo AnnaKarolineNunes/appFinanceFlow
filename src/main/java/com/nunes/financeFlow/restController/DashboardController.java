@@ -6,7 +6,7 @@ import com.nunes.financeFlow.services.DashboardService;
 import com.nunes.financeFlow.shared.ApiResponse;
 
 @RestController
-public class FinanceController {
+public class DashboardController {
 
     @Autowired
     private DashboardService financeService;

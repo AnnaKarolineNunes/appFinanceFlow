@@ -1,6 +1,7 @@
 package com.nunes.financeFlow.models;
 
 import com.nunes.financeFlow.enumerator.TipoDespesa;
+import com.nunes.financeFlow.models.user.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

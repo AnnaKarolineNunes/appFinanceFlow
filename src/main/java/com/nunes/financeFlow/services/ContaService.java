@@ -1,7 +1,7 @@
 package com.nunes.financeFlow.services;
 
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.Usuario;
+import com.nunes.financeFlow.models.user.Usuario;
 import com.nunes.financeFlow.models.dtos.ContaDto;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
@@ -106,13 +106,17 @@ public class ContaService {
                 return new ApiResponse<>(404, "Conta não encontrada por ID!", null);
             }
 
-            // A exclusão da conta acionará a exclusão em cascata das despesas, receitas e do usuário
-            contaRepository.deleteById(id);
+            Conta conta = contaOpt.get();
+            Usuario usuario = conta.getUsuario();
 
-            return new ApiResponse<>(200, "Conta excluída com sucesso!", new ContaDto(contaOpt.get()));
+            // Deletar o usuário irá automaticamente deletar a conta e todas as entidades relacionadas, devido ao cascade
+            usuarioRepository.delete(usuario);
+
+            return new ApiResponse<>(200, "Conta e usuário excluídos com sucesso!", new ContaDto(conta));
         } catch (Exception e) {
             return new ApiResponse<>(500, "Erro ao excluir conta: " + e.getMessage(), null);
         }
     }
+
 
 }

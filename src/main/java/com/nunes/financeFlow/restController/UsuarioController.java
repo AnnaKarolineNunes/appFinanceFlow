@@ -8,33 +8,25 @@ import com.nunes.financeFlow.shared.ApiResponse;
 
 import java.util.List;
 
+@RequestMapping("usuarios")
 @RestController
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/usuarios")
-    public ApiResponse<UsuarioDto> save(@RequestBody UsuarioDto dto) {
-        return this.usuarioService.save(dto);
-    }
 
-    @GetMapping("/usuarios")
+    @GetMapping("/ListaUsuarios")
     public ApiResponse<List<UsuarioDto>> findAll() {
         return this.usuarioService.findAll();
     }
 
-    @GetMapping("/usuarios/{id}")
+    @GetMapping("/getUsuarios/{id}")
     public ApiResponse<UsuarioDto> findById(@PathVariable Long id) {
         return this.usuarioService.findById(id);
     }
 
-    @PutMapping("/atualizarUsuario/{id}")
+    @PutMapping("/putUsuario/{id}")
     public ApiResponse<UsuarioDto> updateById(@PathVariable Long id, @RequestBody UsuarioDto dto) {
         return this.usuarioService.updateById(id, dto);
-    }
-
-    @DeleteMapping("/deletarUsuario/{id}")
-    public ApiResponse<UsuarioDto> deleteById(@PathVariable Long id) {
-        return this.usuarioService.deleteById(id);
     }
 }
