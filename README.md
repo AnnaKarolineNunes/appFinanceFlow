@@ -17,7 +17,7 @@ O **FinanceFlow** é um sistema de controle financeiro pessoal projetado para aj
 ## Tecnologias Utilizadas
 
 - **Back-end**: Java com Spring Boot
-- **Front-end**: HTML, CSS, Bootstrap, e JavaScript
+- **Front-end**: React Js , Tailwind
 - **Banco de Dados**: MySQL
 - **Controle de Versão**: Git e GitHub
 - **Ambiente de Desenvolvimento**: IntelliJ IDEA
