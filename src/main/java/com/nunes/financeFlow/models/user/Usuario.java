@@ -40,6 +40,14 @@ public class Usuario implements UserDetails {
     @Column(nullable = true) // Define a coluna como opcional
     private UserRole role = UserRole.USER; // Define USER como valor padrão
 
+    @Column(nullable = false)
+    private boolean emailVerified = false;  // Novo campo indicando se o e-mail foi verificado
+
+    // Método para marcar o e-mail como verificado
+    public void markEmailAsVerified() {
+        this.emailVerified = true;
+    }
+
     // Implementação de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
