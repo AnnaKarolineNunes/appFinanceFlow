@@ -3,6 +3,7 @@ package com.nunes.financeFlow.infraSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@Profile("prod")
 public class SecurityConfigurations {
     @Autowired
     SecurityFilter securityFilter;
@@ -26,15 +28,10 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Autenticação
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-
-                        // Somente "ADMIN" pode acessar estas rotas
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/auth/verify-email", "/auth/resend-verification")
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, "/contas/ListaContas", "/usuarios/ListaUsuarios").hasAuthority("ROLE_ADMIN")
-
-                        // Qualquer outra rota requer autenticação
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()  // Qualquer outra rota requer autenticação
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

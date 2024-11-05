@@ -72,4 +72,19 @@ public class TokenService {
     private Instant genExpirationDate() {
         return LocalDateTime.now().plusHours(expirationHours).toInstant(ZoneOffset.of("-03:00"));
     }
+
+    public String generatePasswordResetToken(Usuario usuario) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.create()
+                    .withIssuer("auth-api")
+                    .withSubject(usuario.getEmail())
+                    .withClaim("type", "password_reset")  // Adiciona um tipo ao token
+                    .withExpiresAt(LocalDateTime.now().plusHours(24).toInstant(ZoneOffset.of("-03:00")))
+                    .sign(algorithm);
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Error while generating password reset token", exception);
+        }
+    }
+
 }

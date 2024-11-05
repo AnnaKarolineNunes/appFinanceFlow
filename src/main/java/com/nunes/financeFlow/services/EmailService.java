@@ -64,4 +64,28 @@ public class EmailService {
         logger.error("Erro ao enviar e-mail para {}: {}", to, e.getMessage());
         // Aqui, poderíamos também registrar esses logs em um banco de dados ou ferramenta de auditoria.
     }
+
+    public void sendPasswordResetEmail(String to, String token) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(to);
+            message.setSubject("Redefinição de Senha - FinanceFlow");
+            message.setText(buildPasswordResetEmailBody(token));
+
+            // Exibindo o token no console para facilitar os testes
+            System.out.println("Token de redefinição de senha gerado: " + token);
+
+            mailSender.send(message);
+            logger.info("E-mail de redefinição de senha enviado para: {}", to);
+        } catch (Exception e) {
+            logEmailError(to, e);
+        }
+    }
+
+    private String buildPasswordResetEmailBody(String token) {
+        return "Para redefinir sua senha, clique no link abaixo:\n" +
+                appUrl + "/auth/reset-password?token=" + token + "\n" +
+                "Este link expira em 24 horas.";
+    }
+
 }

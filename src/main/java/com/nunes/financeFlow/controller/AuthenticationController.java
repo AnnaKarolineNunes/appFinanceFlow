@@ -2,6 +2,8 @@ package com.nunes.financeFlow.controller;
 
 import com.nunes.financeFlow.infraSecurity.TokenService;
 import com.nunes.financeFlow.models.Conta;
+import com.nunes.financeFlow.models.dtos.ForgotPasswordDTO;
+import com.nunes.financeFlow.models.dtos.ResetPasswordDTO;
 import com.nunes.financeFlow.models.user.*;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
@@ -135,4 +137,46 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao enviar novo e-mail de verificação.");
         }
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody @Valid ForgotPasswordDTO forgotPasswordDTO) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(forgotPasswordDTO.getEmail());
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuário não encontrado.");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        String resetToken = tokenService.generateEmailVerificationToken(usuario);
+
+        // Envia o e-mail com o token de redefinição
+        try {
+            emailService.sendPasswordResetEmail(usuario.getEmail(), resetToken);
+            return ResponseEntity.ok("E-mail para redefinição de senha enviado com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao enviar e-mail de redefinição de senha.");
+        }
+    }
+
+    // Endpoint para redefinir a senha
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO) {
+        String email = tokenService.validateToken(resetPasswordDTO.getToken());
+        if (email == null) {
+            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
+        }
+
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuário não encontrado.");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        usuario.setSenha(passwordEncoder.encode(resetPasswordDTO.getNovaSenha()));
+        usuarioRepository.save(usuario);
+
+        return ResponseEntity.ok("Senha redefinida com sucesso.");
+    }
+
+
+
 }
