@@ -24,6 +24,7 @@ public class TokenService {
     @Value("${api.security.token.expiration.hours}")
     private int expirationHours;
 
+    // Gera um token de autenticação padrão
     public String generateToken(Usuario usuario) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -40,7 +41,21 @@ public class TokenService {
         }
     }
 
+    // Gera um token para verificação de e-mail
+    public String generateEmailVerificationToken(Usuario usuario) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.create()
+                    .withIssuer("auth-api")
+                    .withSubject(usuario.getEmail())
+                    .withExpiresAt(LocalDateTime.now().plusHours(24).toInstant(ZoneOffset.of("-03:00")))
+                    .sign(algorithm);
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Error while generating email verification token", exception);
+        }
+    }
 
+    // Valida o token e retorna o email associado
     public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);

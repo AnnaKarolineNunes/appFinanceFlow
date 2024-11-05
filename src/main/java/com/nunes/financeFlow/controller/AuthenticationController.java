@@ -2,11 +2,9 @@ package com.nunes.financeFlow.controller;
 
 import com.nunes.financeFlow.infraSecurity.TokenService;
 import com.nunes.financeFlow.models.Conta;
-import com.nunes.financeFlow.models.VerificationToken;
 import com.nunes.financeFlow.models.user.*;
 import com.nunes.financeFlow.repositories.ContaRepository;
 import com.nunes.financeFlow.repositories.UsuarioRepository;
-import com.nunes.financeFlow.repositories.VerificationTokenRepository;
 import com.nunes.financeFlow.services.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -42,9 +39,6 @@ public class AuthenticationController {
 
     @Autowired
     private EmailService emailService;
-
-    @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO data) {
@@ -73,8 +67,6 @@ public class AuthenticationController {
         newUser.setEmail(data.email());
         newUser.setSenha(encryptedPassword);
         newUser.setNome(data.nome());
-
-        // Define o role apenas se foi especificado, caso contrário, use o valor padrão USER
         newUser.setRole(data.role() != null ? data.role() : UserRole.USER);
 
         Usuario savedUser = this.usuarioRepository.save(newUser);
@@ -84,14 +76,12 @@ public class AuthenticationController {
         savedUser.setConta(newConta);
         this.contaRepository.save(newConta);
 
-        // Gera o token para verificação de e-mail e salva no banco
-        String verificationTokenString = tokenService.generateToken(savedUser);
-        VerificationToken verificationToken = new VerificationToken(verificationTokenString, savedUser, LocalDateTime.now().plusHours(24));
-        verificationTokenRepository.save(verificationToken);
+        // Gera o token para verificação de e-mail (JWT)
+        String verificationToken = tokenService.generateEmailVerificationToken(savedUser);
 
         // Envia o e-mail de verificação
         try {
-            emailService.sendVerificationEmail(savedUser.getEmail(), verificationTokenString);
+            emailService.sendVerificationEmail(savedUser.getEmail(), verificationToken);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário registrado, mas falha ao enviar e-mail de verificação.");
         }
@@ -101,18 +91,19 @@ public class AuthenticationController {
 
     @GetMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
-        Optional<VerificationToken> verificationTokenOpt = verificationTokenRepository.findByToken(token);
-
-        if (verificationTokenOpt.isEmpty()) {
+        String email = tokenService.validateToken(token);
+        if (email == null) {
             return ResponseEntity.badRequest().body("Token inválido ou expirado.");
         }
 
-        VerificationToken verificationToken = verificationTokenOpt.get();
-        Usuario usuario = verificationToken.getUsuario();
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuário não encontrado.");
+        }
 
-        // Verifica se o token já expirou
-        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            return ResponseEntity.badRequest().body("Token expirado.");
+        Usuario usuario = usuarioOpt.get();
+        if (usuario.isEmailVerified()) {
+            return ResponseEntity.badRequest().body("E-mail já foi verificado.");
         }
 
         // Marca o e-mail do usuário como verificado
@@ -120,5 +111,28 @@ public class AuthenticationController {
         usuarioRepository.save(usuario);
 
         return ResponseEntity.ok("E-mail verificado com sucesso.");
+    }
+
+    @GetMapping("/resend-verification")
+    public ResponseEntity<String> resendVerificationEmail(@RequestParam("email") String email) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuário não encontrado.");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        if (usuario.isEmailVerified()) {
+            return ResponseEntity.badRequest().body("O e-mail já foi verificado.");
+        }
+
+        // Gera um novo token de verificação (JWT)
+        String verificationToken = tokenService.generateEmailVerificationToken(usuario);
+
+        try {
+            emailService.sendVerificationEmail(usuario.getEmail(), verificationToken);
+            return ResponseEntity.ok("Novo e-mail de verificação enviado com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao enviar novo e-mail de verificação.");
+        }
     }
 }

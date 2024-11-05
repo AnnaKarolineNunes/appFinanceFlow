@@ -31,6 +31,10 @@ public class EmailService {
             message.setTo(to);
             message.setSubject("Verificação de E-mail - FinanceFlow");
             message.setText(buildVerificationEmailBody(token));
+
+            // Exibindo o token no console para facilitar os testes
+            System.out.println("Token de verificação gerado: " + token);
+
             mailSender.send(message);
             logger.info("E-mail de verificação enviado para: {}", to);
         } catch (Exception e) {
